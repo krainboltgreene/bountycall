@@ -1,0 +1,2 @@
+class ApplicationNull < ApplicationComputed
+end

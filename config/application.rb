@@ -1,22 +1,24 @@
-require_relative 'boot'
+require_relative("boot")
 
-require "open-uri"
-require "rails"
+require("open-uri")
+require("ostruct")
+require("rails")
 # Pick the frameworks you want:
-require "active_model/railtie"
-require "active_job/railtie"
-require "active_record/railtie"
-require "active_storage/engine"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "action_view/railtie"
-require "action_cable/engine"
+require("active_model/railtie")
+require("active_job/railtie")
+require("active_record/railtie")
+require("action_controller/railtie")
+require("action_mailer/railtie")
+require("action_view/railtie")
+require("action_cable/engine")
+require("active_storage/engine")
 # require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+
 
 module BlankWebRails
   class Application < Rails::Application
@@ -35,23 +37,73 @@ module BlankWebRails
     config.generators.orm :active_record, primary_key_type: :uuid
 
     config.action_controller.include_all_helpers = false
+    # by default tables should have uuid primary keys
+    config.generators do |generator|
+      generator.orm(:active_record, :primary_key_type => :uuid)
+    end
 
     config.active_record.schema_format = :sql
 
+    # Set the application-level cache
+    config.cache_store = [
+      :redis_cache_store,
+      {
+        :driver => :hiredis,
+        :expires_in => 30.minutes,
+        :compress => true,
+        :redis => BlankWebRails::REDIS_CACHE_CONNECTION_POOL
+      }
+    ]
+
+    # Set the http-level caching
+    config.action_controller.perform_caching = true
+    config.action_mailer.perform_caching = true
+    config.public_file_server.headers = {
+      "Cache-Control" => "public, max-age=#{Integer(1.week.seconds)}"
+    }
+
+    # Uses the tags defined below to create logs that are easily grep-able.
+    unless Rails.env.test?
+      config.logger = ActiveSupport::TaggedLogging.new(
+        ActiveSupport::Logger.new(STDOUT)
+      )
+    end
+
     config.cache_store = :redis_store, ENV.fetch("REDIS_URL"), { expires_in: 30.minutes, pool_size: Integer(ENV.fetch("RAILS_CACHE_POOL_SIZE")) }
+    # Each of the below adds one informational piece to each logline
+    config.log_tags = [
+      ->(_) do "time=#{Time.now.iso8601}" end,
+      ->(request) do
+        "remote-ip=#{request.remote_ip}" if request.remote_ip
+      end,
+      ->(request) do
+        if request.cookie_jar.encrypted.try!(:[], config.session_options[:key]).try!(:[], "session_id")
+          "session-id=#{request.cookie_jar.encrypted.try!(:[], config.session_options[:key]).try!(:[], "session_id")}"
+        end
+      end,
+      ->(request) do
+        "context-id=#{request.request_id}" if request.request_id
+      end
+    ]
+    config.action_cable.log_tags = [
+      :action_cable,
+      ->(request) {request.uuid}
+    ]
 
     if ENV.fetch("HEROKU_APP_NAME", nil)
       Rails.application.config.action_mailer.default_url_options = {
         host: "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
+        :host => "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
       }
     elsif Rails.env.production?
       Rails.application.config.action_mailer.default_url_options = {
         host: ENV.fetch("RAILS_HOST")
+        :host => ENV.fetch("RAILS_HOST")
       }
     else
       Rails.application.config.action_mailer.default_url_options = {
         host: ENV.fetch("RAILS_HOST"),
-        port: Integer(ENV.fetch("PORT"))
+        :port => ENV.fetch("PORT")
       }
     end
   end

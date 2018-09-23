@@ -1,0 +1,2 @@
+class NoConsoleAuthenticationProvidedError < ApplicationError
+end

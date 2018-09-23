@@ -1,1 +1,1 @@
-Redis::Objects.redis = REDIS_CONNECTION_POOL
+Redis::Objects.redis = BlankWebRails::REDIS_OBJECTS_CONNECTION_POOL
