@@ -1,11 +1,9 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.4.2'
+ruby '2.5.0'
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
+# gem 'mini_magick', '~> 4.8'
 
 gem 'rails', '5.1.4'
 gem 'pg', '0.21.0'
@@ -35,6 +33,7 @@ gem 'newrelic_rpm', '4.6.0.338'
 gem 'high_voltage', '3.0.0'
 gem 'sitemap_generator', '6.0.0'
 gem 'redis-objects', '1.4.0'
+gem 'bootsnap', '>= 1.1.0', require: false
 
 group :development, :test do
   gem 'dotenv-rails', '2.2.1', require: 'dotenv/rails-now'

@@ -25,13 +25,13 @@ default: &default
 
 development:
   <<: *default
-  database: blankwebrails_development
+  database: blank-web-rails_development
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
   # When left blank, postgres will use the default role. This is
   # the same name as the operating system user that initialized the database.
-  #username: blankwebrails
+  #username: blank-web-rails
 
   # The password associated with the postgres role (username).
   #password:
@@ -59,7 +59,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: blankwebrails_test
+  database: blank-web-rails_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -74,5 +74,14 @@ test:
 # available as an environment variable. For example:
 #
 #   DATABASE_URL="postgres://myuser:mypass@localhost/somedatabase"
+#
+# You can use this database configuration with:
+#
+#   production:
+#     url: <%= ENV['DATABASE_URL'] %>
+#
 production:
   <<: *default
+  database: blank-web-rails_production
+  username: blank-web-rails
+  password: <%= ENV['BLANK-WEB-RAILS_DATABASE_PASSWORD'] %>
