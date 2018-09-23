@@ -1,6 +1,6 @@
 {
   "name": "blank-web-rails",
-  "description": "The first pass at the BlankWebRails application",
+  "description": "The blank-web-rails service",
   "scripts": {
     "postdeploy": "bin/postdeploy"
   },
@@ -8,10 +8,10 @@
     "RAILS_HOST": {
       "required": true
     },
-    "ORIGIN_ENCRYPTION_PRIVATE": {
+    "ENCRYPTION_SECRET": {
       "generator": "secret"
     },
-    "ORIGIN_ENCRYPTION_SALT": {
+    "ENCRYPTION_SALT": {
       "generator": "secret"
     },
     "RAILS_MASTER_KEY": {
@@ -21,29 +21,60 @@
       "value": "5",
       "required": true
     },
-    "RAILS_SESSION_PRIVATE": {
-      "generator": "secret"
-    },
     "WEB_CONCURRENCY": {
       "value": "2",
       "required": true
     },
-    "RAILS_EMAIL_FROM": {
+    "RAILS_EMAIL_USER": {
+      "required": true
+    },
+    "RAILS_EMAIL_HOST": {
       "required": true
     },
     "PGBOUNCER_POOL": {
       "value": "300",
       "required": true
     },
-    "RAILS_CACHE_POOL_SIZE": {
+    "REDIS_CACHE_URL": {
+      "required": true
+    },
+    "REDIS_CACHE_POOL_SIZE": {
       "value": "2",
       "required": true
     },
-    "REDIS_POOL_SIZE": {
+    "REDIS_OBJECTS_URL": {
+      "required": true
+    },
+    "REDIS_OBJECTS_POOL_SIZE": {
       "value": "2",
       "required": true
     },
-    "RACK_SERVICE_TIMEOUT": {
+    "REDIS_REDLOCK_URL": {
+      "required": true
+    },
+    "REDIS_REDLOCK_POOL_SIZE": {
+      "value": "2",
+      "required": true
+    },
+    "REDIS_ACTION_CABLE_URL": {
+      "required": true
+    },
+    "REDIS_ACTION_CABLE_POOL_SIZE": {
+      "value": "2",
+      "required": true
+    },
+    "REDIS_SIDEKIQ_URL": {
+      "required": true
+    },
+    "REDIS_SIDEKIQ_SERVER_POOL_SIZE": {
+      "value": "10",
+      "required": true
+    },
+    "REDIS_SIDEKIQ_CLIENT_POOL_SIZE": {
+      "value": "2",
+      "required": true
+    },
+    "RACK_TIMEOUT_SERVICE_TIMEOUT": {
       "required": true
     },
     "HEROKU_APP_NAME": {
@@ -60,7 +91,34 @@
     "logdna",
     "newrelic",
     "heroku-postgresql",
-    "heroku-redis",
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "as": "REDIS_OBJECTS",
+      "options": {
+        "maxmemory_policy": "noeviction"
+      }
+    },
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "as": "REDIS_REDLOCK",
+      "options": {
+        "maxmemory_policy": "noeviction"
+      }
+    },
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "as": "REDIS_SIDEKIQ",
+      "options": {
+        "maxmemory_policy": "noeviction"
+      }
+    },
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "as": "REDIS_CACHE",
+      "options": {
+        "maxmemory_policy": "volatile-lru"
+      }
+    },
     "mailtrap"
   ],
   "buildpacks": [
