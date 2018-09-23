@@ -1,5 +1,5 @@
 {
-  "name": "blankwebrails-mvp",
+  "name": "blank-web-rails",
   "description": "The first pass at the BlankWebRails application",
   "scripts": {
     "postdeploy": "bin/postdeploy"

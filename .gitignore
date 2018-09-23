@@ -12,10 +12,14 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+
+# Ignore uploaded files in development
+/storage/*
+!/storage/.keep
+
+# Ignore assets dependencies
 /node_modules
-/yarn-error.log
+/public/assets
+
+# Ignore secret stuff
 .env
-.byebug_history
-/public/packs
-/public/packs-test
-/node_modules
