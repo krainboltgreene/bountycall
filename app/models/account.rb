@@ -4,11 +4,6 @@ class Account < ApplicationRecord
   include(FriendlyId)
   include(AuditedWithTransitions)
 
-  has_many(:payments, :dependent => :destroy)
-  has_many(:recipes, :dependent => :destroy, :foreign_key => :author_id, :inverse_of => :author)
-  has_many(:reviews, :dependent => :destroy, :foreign_key => :author_id, :inverse_of => :author)
-  has_many(:critiques, :dependent => :destroy, :foreign_key => :author_id, :inverse_of => :author)
-
   friendly_id(:email, :use => [:slugged, :history], :slug_column => :username)
 
   devise(:database_authenticatable)

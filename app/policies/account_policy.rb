@@ -26,8 +26,4 @@ class AccountPolicy < ApplicationPolicy
   def read_attribute_authentication_secret?
     (actor == record) || record.new_record?
   end
-
-  def related_payments(payments = nil)
-    PaymentPolicy::Scope.new(actor, payments || record.payments).resolve
-  end
 end
