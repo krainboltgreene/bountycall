@@ -19,11 +19,12 @@ require("active_storage/engine")
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative("../lib/source")
 
 module BlankWebRails
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults(5.2)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
@@ -34,15 +35,15 @@ module BlankWebRails
     config.generators.system_tests = nil
     config.generators.assets = false
     config.generators.helper = false
-    config.generators.orm :active_record, primary_key_type: :uuid
 
-    config.action_controller.include_all_helpers = false
     # by default tables should have uuid primary keys
     config.generators do |generator|
       generator.orm(:active_record, :primary_key_type => :uuid)
     end
 
+    config.action_controller.include_all_helpers = false
     config.active_record.schema_format = :sql
+    config.active_job.queue_adapter = :sidekiq
 
     # Set the application-level cache
     config.cache_store = [
@@ -69,7 +70,6 @@ module BlankWebRails
       )
     end
 
-    config.cache_store = :redis_store, ENV.fetch("REDIS_URL"), { expires_in: 30.minutes, pool_size: Integer(ENV.fetch("RAILS_CACHE_POOL_SIZE")) }
     # Each of the below adds one informational piece to each logline
     config.log_tags = [
       ->(_) do "time=#{Time.now.iso8601}" end,
@@ -92,17 +92,15 @@ module BlankWebRails
 
     if ENV.fetch("HEROKU_APP_NAME", nil)
       Rails.application.config.action_mailer.default_url_options = {
-        host: "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
         :host => "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
       }
     elsif Rails.env.production?
       Rails.application.config.action_mailer.default_url_options = {
-        host: ENV.fetch("RAILS_HOST")
         :host => ENV.fetch("RAILS_HOST")
       }
     else
       Rails.application.config.action_mailer.default_url_options = {
-        host: ENV.fetch("RAILS_HOST"),
+        :host => ENV.fetch("RAILS_HOST"),
         :port => ENV.fetch("PORT")
       }
     end

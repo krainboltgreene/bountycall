@@ -1,53 +1,127 @@
 class ApplicationPolicy
-  attr_reader :user, :record
+  class ApplicationScope
+    attr_reader(:actor)
+    attr_reader(:relation)
 
-  def initialize(user, record)
-    @user = user
+    def initialize(actor, relation)
+      @actor = actor || ActorNull.new
+      @relation = relation
+    end
+
+    def resolve
+      relation.none
+    end
+
+    private def completed?
+      actor.onboarding_state?(:completed)
+    end
+
+    private def administrator?
+      actor.role_state?(:administrator)
+    end
+
+    private def user?
+      actor.role_state?(:user)
+    end
+  end
+
+  attr_reader(:actor)
+  attr_reader(:record)
+
+  def initialize(actor, record)
+    @actor = actor || ActorNull.new
     @record = record
   end
 
   def index?
-    false
+    noone
   end
 
   def show?
-    scope.where(:id => record.id).exists?
+    noone
   end
 
   def create?
-    false
-  end
-
-  def new?
-    create?
+    noone
   end
 
   def update?
-    false
-  end
-
-  def edit?
-    update?
+    noone
   end
 
   def destroy?
-    false
+    noone
   end
 
   def scope
-    Pundit.policy_scope!(user, record.class)
+    Pundit.policy_scope!(actor, record.class)
   end
 
-  class Scope
-    attr_reader :user, :scope
-
-    def initialize(user, scope)
-      @user = user
-      @scope = scope
+  def read_attribute?(name)
+    if respond_to?("read_attribute_#{name}?")
+      public_send("read_attribute_#{name}?")
+    else
+      noone
     end
+  end
 
-    def resolve
-      scope
+  def write_attribute?(name)
+    if respond_to?("write_attribute_#{name}?")
+      public_send("write_attribute_#{name}?")
+    else
+      noone
     end
+  end
+
+  private def read_relation?(association)
+    if record.public_send(association).model.policy_class.const_defined?("Scope")
+      record.public_send(association).model.policy_class.const_get("Scope").new(actor, record.public_send(association))
+    else
+      record.public_send(association).none
+    end
+  end
+
+  private def completed
+    actor.onboarding_state?(:completed)
+  end
+
+  private def administrators
+    actor.role_state?(:administrator)
+  end
+
+  private def everyone
+    true
+  end
+
+  private def noone
+    false
+  end
+
+  private def users
+    actor.role_state?(:user)
+  end
+
+  private def converted?
+    actor.onboarding_state?(:converted)
+  end
+
+  private def completed?
+    actor.onboarding_state?(:completed)
+  end
+
+  private def only_logged_out
+    actor.blank?
+  end
+
+  private def only_logged_in
+    actor.id.present?
+  end
+
+  private def owner?
+    actor == record.author
+  end
+
+  private def administrator?
+    account.role_state?(:administrator)
   end
 end
