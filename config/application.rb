@@ -95,7 +95,7 @@ module Bountycall
       ->(request) {request.uuid}
     ]
 
-    if ENV.fetch("HEROKU_APP_NAME", nil)
+    if ENV.fetch("HEROKU_PARENT_APP_NAME", nil)
       Rails.application.config.action_controller.default_url_options = {
         :host => "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
       }
