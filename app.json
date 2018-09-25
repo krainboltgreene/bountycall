@@ -1,6 +1,6 @@
 {
-  "name": "bountycall",
-  "description": "The bountycall service",
+  "name": "thebountycall",
+  "description": "The Bounty Call Application",
   "scripts": {
     "postdeploy": "bin/postdeploy"
   },
@@ -114,6 +114,13 @@
       "as": "REDIS_CACHE",
       "options": {
         "maxmemory_policy": "volatile-lru"
+      }
+    },
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "as": "REDIS_ACTION_CABLE",
+      "options": {
+        "maxmemory_policy": "noeviction"
       }
     },
     "mailtrap"

@@ -83,6 +83,4 @@ test:
 #
 production:
   <<: *default
-  database: bountycall_production
-  username: bountycall
-  password: <%= ENV['bountycall_DATABASE_PASSWORD'] %>
+  url: <%= ENV.fetch("DATABASE_URL") %>
