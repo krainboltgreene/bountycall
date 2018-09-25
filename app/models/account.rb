@@ -1,24 +1,21 @@
 class Account < ApplicationRecord
   MACHINE_ID = "machine@system.local".freeze
-  USERNAME_PATTERN = /\A[a-z0-9_\-\.]+\z/i
-  include(FriendlyId)
   include(AuditedWithTransitions)
 
-  friendly_id(:email, :use => [:slugged, :history], :slug_column => :username)
+  has_one :twitch_identity, dependent: :destroy
+  has_many :contacts, dependent: :destroy
+  has_many :email_contacts, dependent: :destroy
+  has_many :phone_contacts, dependent: :destroy
+  has_many :phone_contacts, dependent: :destroy
+
   validates_presence_of :role_state, :on => :update
   validates_inclusion_of :role_state, :in => ["user", "administrator"], :on => :update
+  validates_presence_of :twitch_identity, :on => :update
 
-  devise(:database_authenticatable)
-  devise(:confirmable)
-  devise(:lockable)
-  devise(:recoverable)
   devise(:registerable)
-  devise(:rememberable)
-  devise(:validatable)
+  devise(:omniauthable, omniauth_providers: [:twitch])
   devise(:async)
 
-  before_validation(:generate_password, :unless => :encrypted_password?)
-  before_validation(:generate_authentication_secret, :unless => :authentication_secret?)
   state_machine(:role_state, :initial => :user) do
     event(:upgrade_to_administrator) do
       transition(:user => :administrator)
@@ -41,19 +38,23 @@ class Account < ApplicationRecord
         AccountRoleMailer.with(:destination => record).downgraded_to_user.deliver_later
       end
     end
-
-  validates_presence_of(:username, :if => :email_required?)
-  validates_format_of(:username, :with => USERNAME_PATTERN, :if => :email_required?)
-
-  private def generate_password
-    assign_attributes(:password => SecureRandom.hex(60))
   end
 
-  private def generate_authentication_secret
-    assign_attributes(:authentication_secret => Devise.friendly_token)
+  def self.find_or_create_with_omniauth(data)
+    transaction do
+      "#{data.fetch("provider")}Identity".
+        classify.
+        constantize.
+        find_or_initialize_by(:external_id => data.fetch("uid")) do |identity|
+          identity.assign_attributes(:account => Account.create!)
+        end.
+        tap {|identity| identity.assign_attributes(:raw => data) }.
+        tap(&:save!).
+        account
+    end
   end
 
-  private def account_confirmed
-    complete! if onboarding_state?(:converted) && can_complete?
+  def completed?
+    contacts.with_confirmation_state(:confirmed).exists?
   end
 end
