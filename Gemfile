@@ -56,6 +56,7 @@ gem("sitemap_generator", "6.0.1")
 gem("rack-timeout", "0.5.1")
 gem("twitch", "0.1.3")
 gem("sidecloq", "0.4.1")
+gem("draper", "3.0.1")
 
 group(:production) do
   gem("newrelic_rpm", "5.2.0.345")
