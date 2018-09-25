@@ -1,3 +1,37 @@
-<% content_for :page_title, "Title - Subtitle" %>
+<% content_for :page_title, "Bounty Call" %>
 
-<h1>Home</h1>
+<h1>Bounty Call</h1>
+
+<% if account_signed_in? %>
+  <p>
+    Thanks for signing up for Bounty Call. Here are the contacts we have:
+  </p>
+
+  <ul>
+    <% if current_account.contacts.exists? %>
+      <% current_account.contacts.each do |contact| %>
+        <li style="color: <%= if contact.confirmed? then "green" else "red" end %>;">
+          <% case contact.subtype %>
+          <% when "EmailContact" %>
+            <i class="fas fa-at"></i>
+          <% when "PhoneContact" %>
+            <i class="fas fa-mobile-alt"></i>
+          <% when "TwitchContact" %>
+            <i class="fab fa-twitch"></i>
+          <% when "DiscordContact" %>
+            <i class="fab fa-discord"></i>
+          <% end %>
+          <%= contact.value %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+
+  <p>
+    If you'd like to add a new contact, <%= link_to("fill out a form here", new_contact_url) %>.
+  </p>
+<% else %>
+  <p>
+    Welcome to Bounty Call! If you <%= link_to("sign up with your Twitch account", omniauth_authorize_path(:account, :twitch)) %> and provide an email, phone, or discord connection we will send you a message when you get a bounty.
+  </p>
+<% end %>

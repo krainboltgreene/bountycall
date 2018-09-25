@@ -1,8 +1,5 @@
 class ActorNull < ApplicationNull
   attr_accessor(:id)
-  attr_accessor(:name)
-  attr_accessor(:username)
-  attr_accessor(:email)
   attr_accessor(:role_state)
 
   def self.model_name

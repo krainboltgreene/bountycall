@@ -14,7 +14,7 @@ class LockOperation < ApplicationOperation
     when :soft
       fresh(
         :state => {
-          :lock => BlankWebRails::REDIS_REDLOCK_CONNECTION_POOL.with do |client|
+          :lock => Bountycall::REDIS_REDLOCK_CONNECTION_POOL.with do |client|
             client.lock(key(state.resource.to_gid, state.name), state.expires_in)
           end
         }

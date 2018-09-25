@@ -1,0 +1,8 @@
+<h1>Confirm Contact</h1>
+
+<%= form_for contact, :url => contact_url(contact.id) do |form| %>
+  <p>
+    You are confirming that you own the <%= contact.slug %> contact <span class="font-monospace font-italic"><%= contact.value %></span>.
+  </p>
+  <%= form.submit "Confirm", :class => "btn btn-primary" %>
+<% end %>

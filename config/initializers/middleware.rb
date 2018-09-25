@@ -1,4 +1,4 @@
-BlankWebRails::Application.config.middleware.tap do |middleware|
+Bountycall::Application.config.middleware.tap do |middleware|
   middleware.use(Rack::Deflater)
   middleware.use(Rack::Attack)
   # config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do

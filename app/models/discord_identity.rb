@@ -1,0 +1,3 @@
+class DiscordIdentity < Identity
+
+end

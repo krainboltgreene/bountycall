@@ -1,6 +1,7 @@
 require_relative("boot")
 
 require("open-uri")
+require("net/http")
 require("ostruct")
 require("rails")
 # Pick the frameworks you want:
@@ -25,7 +26,7 @@ require("sidecloq/web")
 
 require_relative("../lib/source")
 
-module BlankWebRails
+module Bountycall
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults(5.2)
@@ -56,7 +57,7 @@ module BlankWebRails
         :driver => :hiredis,
         :expires_in => 30.minutes,
         :compress => true,
-        :redis => BlankWebRails::REDIS_CACHE_CONNECTION_POOL
+        :redis => Bountycall::REDIS_CACHE_CONNECTION_POOL
       }
     ]
 

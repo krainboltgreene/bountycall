@@ -1,6 +1,6 @@
 {
-  "name": "blank-web-rails",
-  "description": "The blank-web-rails service",
+  "name": "bountycall",
+  "description": "The bountycall service",
   "scripts": {
     "postdeploy": "bin/postdeploy"
   },

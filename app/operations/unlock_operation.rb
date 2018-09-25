@@ -7,7 +7,7 @@ class UnlockOperation < ApplicationOperation
     field(:type, :type => Types::Strict::Symbol)
   end
   def delete(state:)
-    BlankWebRails::REDIS_REDLOCK_CONNECTION_POOL.with do |client|
+    Bountycall::REDIS_REDLOCK_CONNECTION_POOL.with do |client|
       client.unlock(state.lock)
     end
   end

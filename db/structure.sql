@@ -74,26 +74,9 @@ SET default_with_oids = false;
 
 CREATE TABLE public.accounts (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    name text,
-    email public.citext,
-    username public.citext,
-    onboarding_state public.citext NOT NULL,
-    role_state public.citext NOT NULL,
-    encrypted_password text NOT NULL,
-    authentication_secret text NOT NULL,
-    reset_password_token text,
-    reset_password_sent_at timestamp without time zone,
-    remember_created_at timestamp without time zone,
-    confirmation_token text,
-    confirmed_at timestamp without time zone,
-    confirmation_sent_at timestamp without time zone,
-    unconfirmed_email text,
-    failed_attempts integer DEFAULT 0 NOT NULL,
-    unlock_token text,
-    locked_at timestamp without time zone,
+    role_state public.citext DEFAULT 'user'::public.citext NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    CONSTRAINT accounts_name_null CHECK (((NOT (onboarding_state OPERATOR(public.=) 'completed'::public.citext)) OR (name IS NOT NULL)))
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -104,6 +87,21 @@ CREATE TABLE public.accounts (
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contacts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.contacts (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    account_id uuid NOT NULL,
+    subtype text NOT NULL,
+    value text NOT NULL,
+    confirmation_state public.citext DEFAULT 'unconfirmed'::public.citext NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -143,59 +141,15 @@ ALTER SEQUENCE public.friendly_id_slugs_id_seq OWNED BY public.friendly_id_slugs
 
 
 --
--- Name: gutentag_taggings; Type: TABLE; Schema: public; Owner: -
+-- Name: identities; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.gutentag_taggings (
-    id bigint NOT NULL,
-    tag_id uuid NOT NULL,
-    taggable_id uuid NOT NULL,
-    taggable_type text NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: gutentag_taggings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.gutentag_taggings_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: gutentag_taggings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.gutentag_taggings_id_seq OWNED BY public.gutentag_taggings.id;
-
-
---
--- Name: gutentag_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.gutentag_tags (
+CREATE TABLE public.identities (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    name public.citext NOT NULL,
-    taggings_count bigint DEFAULT 0 NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: payment_types; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.payment_types (
-    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    name text NOT NULL,
-    moderation_state text NOT NULL,
+    account_id uuid NOT NULL,
+    subtype public.citext NOT NULL,
+    external_id text NOT NULL,
+    raw jsonb NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -256,25 +210,10 @@ ALTER TABLE ONLY public.friendly_id_slugs ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- Name: gutentag_taggings id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.gutentag_taggings ALTER COLUMN id SET DEFAULT nextval('public.gutentag_taggings_id_seq'::regclass);
-
-
---
 -- Name: versions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.versions ALTER COLUMN id SET DEFAULT nextval('public.versions_id_seq'::regclass);
-
-
---
--- Name: accounts accounts_email_unique; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.accounts
-    ADD CONSTRAINT accounts_email_unique UNIQUE (email) DEFERRABLE;
 
 
 --
@@ -286,19 +225,19 @@ ALTER TABLE ONLY public.accounts
 
 
 --
--- Name: accounts accounts_username_unique; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.accounts
-    ADD CONSTRAINT accounts_username_unique UNIQUE (username) DEFERRABLE;
-
-
---
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: contacts contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contacts
+    ADD CONSTRAINT contacts_pkey PRIMARY KEY (id);
 
 
 --
@@ -310,27 +249,11 @@ ALTER TABLE ONLY public.friendly_id_slugs
 
 
 --
--- Name: gutentag_taggings gutentag_taggings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: identities identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.gutentag_taggings
-    ADD CONSTRAINT gutentag_taggings_pkey PRIMARY KEY (id);
-
-
---
--- Name: gutentag_tags gutentag_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.gutentag_tags
-    ADD CONSTRAINT gutentag_tags_pkey PRIMARY KEY (id);
-
-
---
--- Name: payment_types payment_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.payment_types
-    ADD CONSTRAINT payment_types_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.identities
+    ADD CONSTRAINT identities_pkey PRIMARY KEY (id);
 
 
 --
@@ -350,34 +273,6 @@ ALTER TABLE ONLY public.versions
 
 
 --
--- Name: index_accounts_on_authentication_secret; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_accounts_on_authentication_secret ON public.accounts USING btree (authentication_secret);
-
-
---
--- Name: index_accounts_on_confirmation_token; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_accounts_on_confirmation_token ON public.accounts USING btree (confirmation_token);
-
-
---
--- Name: index_accounts_on_email; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_accounts_on_email ON public.accounts USING btree (email);
-
-
---
--- Name: index_accounts_on_onboarding_state; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_accounts_on_onboarding_state ON public.accounts USING btree (onboarding_state);
-
-
---
 -- Name: index_accounts_on_role_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -385,17 +280,24 @@ CREATE INDEX index_accounts_on_role_state ON public.accounts USING btree (role_s
 
 
 --
--- Name: index_accounts_on_unlock_token; Type: INDEX; Schema: public; Owner: -
+-- Name: index_contacts_on_account_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_accounts_on_unlock_token ON public.accounts USING btree (unlock_token);
+CREATE INDEX index_contacts_on_account_id ON public.contacts USING btree (account_id);
 
 
 --
--- Name: index_accounts_on_username; Type: INDEX; Schema: public; Owner: -
+-- Name: index_contacts_on_confirmation_state; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_accounts_on_username ON public.accounts USING btree (username);
+CREATE INDEX index_contacts_on_confirmation_state ON public.contacts USING btree (confirmation_state);
+
+
+--
+-- Name: index_contacts_on_subtype; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contacts_on_subtype ON public.contacts USING btree (subtype);
 
 
 --
@@ -420,59 +322,17 @@ CREATE INDEX index_friendly_id_slugs_on_sluggable_id_and_sluggable_type ON publi
 
 
 --
--- Name: index_guten_taggings_on_unique_tagging; Type: INDEX; Schema: public; Owner: -
+-- Name: index_identities_on_account_id_and_subtype_and_external_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_guten_taggings_on_unique_tagging ON public.gutentag_taggings USING btree (tag_id, taggable_id, taggable_type);
-
-
---
--- Name: index_gutentag_taggings_on_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_gutentag_taggings_on_tag_id ON public.gutentag_taggings USING btree (tag_id);
+CREATE UNIQUE INDEX index_identities_on_account_id_and_subtype_and_external_id ON public.identities USING btree (account_id, subtype, external_id);
 
 
 --
--- Name: index_gutentag_taggings_on_taggable_id_and_taggable_type; Type: INDEX; Schema: public; Owner: -
+-- Name: index_identities_on_subtype_and_external_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_gutentag_taggings_on_taggable_id_and_taggable_type ON public.gutentag_taggings USING btree (taggable_id, taggable_type);
-
-
---
--- Name: index_gutentag_tags_on_created_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_gutentag_tags_on_created_at ON public.gutentag_tags USING btree (created_at);
-
-
---
--- Name: index_gutentag_tags_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_gutentag_tags_on_name ON public.gutentag_tags USING btree (name);
-
-
---
--- Name: index_gutentag_tags_on_updated_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_gutentag_tags_on_updated_at ON public.gutentag_tags USING btree (updated_at);
-
-
---
--- Name: index_payment_types_on_moderation_state; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_payment_types_on_moderation_state ON public.payment_types USING btree (moderation_state);
-
-
---
--- Name: index_payment_types_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_payment_types_on_name ON public.payment_types USING btree (name);
+CREATE INDEX index_identities_on_subtype_and_external_id ON public.identities USING btree (subtype, external_id);
 
 
 --
@@ -519,14 +379,6 @@ ALTER TABLE ONLY public.versions
 
 
 --
--- Name: gutentag_taggings fk_rails_cb73a18b77; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.gutentag_taggings
-    ADD CONSTRAINT fk_rails_cb73a18b77 FOREIGN KEY (tag_id) REFERENCES public.gutentag_tags(id);
-
-
---
 -- PostgreSQL database dump complete
 --
 
@@ -538,9 +390,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171203045307'),
 ('20171203064940'),
 ('20171230031126'),
-('20171231104815'),
-('20171231104816'),
-('20180408203926'),
-('20180702062857');
+('20180702062857'),
+('20180923232047'),
+('20180924014908');
 
 

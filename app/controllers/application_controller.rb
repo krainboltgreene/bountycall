@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   private def assign_paper_trail_context
     if account_signed_in?
-      PaperTrail.request.whodunnit = current_account.email
+      PaperTrail.request.whodunnit = current_account.id
     else
       PaperTrail.request.whodunnit = Account::MACHINE_ID
     end

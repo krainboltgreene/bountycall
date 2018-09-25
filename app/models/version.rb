@@ -11,7 +11,7 @@ class Version < PaperTrail::Version
     if actor_id.present?
       super
     else
-      ActorNull.new(:id => 0, :name => whodunnit, :username => whodunnit, :email => whodunnit)
+      ActorNull.new(:id => 0)
     end
   end
 end

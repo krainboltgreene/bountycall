@@ -8,46 +8,18 @@
 
 PaperTrail.request(:whodunnit => Account::MACHINE_ID, :controller_info => {:context_id => SecureRandom.uuid(), :actor_id => nil}) do
   ActiveRecord::Base.transaction do
-    PaymentType.create([
-      {:name => "Cash"},
-      {:name => "Check"},
-      {:name => "Visa"},
-      {:name => "Discover Card"},
-      {:name => "Mastercard"},
-      {:name => "EBT/Foodstamps"},
-      {:name => "Giftcards"},
-      {:name => "Online Payments"},
-      {:name => "Bitcoin/Cryptocurrency"}
-    ])
-
     if Rails.env.production? && Account.count.zero?
-      krainboltgreene = Account.create!(
-        :username => "krainboltgreene",
-        :name => "Kurtis Rainbolt-Greene",
-        :email => "kurtis@rainbolt-greene.online",
-        :password => SecureRandom.hex(32)
-      )
+      krainboltgreene = Account.create!
       krainboltgreene.upgrade_to_administrator!
     end
 
     if Rails.env.development?
-      administrator = Account.create!(
-        :username => "sally",
-        :name => "Sally Stuthers",
-        :email => "sally@example.com",
-        :password => "password"
-      )
+      administrator = Account.create!()
       administrator.upgrade_to_administrator!
 
-      user = Account.create!(
-        :username => "calvin",
-        :name => "Calvin Klean",
-        :email => "calvin@example.com",
-        :password => "password"
-      )
       user = Account.create!
 
-      PaperTrail.request(:whodunnit => administrator.email, :controller_info => {:context_id => SecureRandom.uuid(), :actor_id => administrator.id}) do
+      PaperTrail.request(:whodunnit => administrator.id, :controller_info => {:context_id => SecureRandom.uuid(), :actor_id => administrator.id}) do
       end
     end
   end

@@ -8,7 +8,7 @@ shared:
         BUNDLE_PATH: "./vendor/bundle"
         BUNDLE_RETRY: 2
         PGHOST: "127.0.0.1"
-        PGUSER: "blank-web-rails"
+        PGUSER: "bountycall"
         PORT: 3000
         RAILS_MASTER_KEY: "b2f6f2326268f8d9fe16908969359f12"
         ENCRYPTION_SECRET: "c312adc329d7c11c8bfc17d52f7269aceca1ef55372ae2586a1d3e3ae8304f7056e6b3b556fb5fdfdfe86566604f51b5636dd93b5522d08f29b8f3dd022104bd"
@@ -42,27 +42,27 @@ shared:
   caches:
     git_save: &git_save
       save_cache:
-        key: "blank-web-rails-v1-git-{{ .Branch }}-{{ .Revision }}"
+        key: "bountycall-v1-git-{{ .Branch }}-{{ .Revision }}"
         paths:
           - ".git/"
     git_restore: &git_restore
       restore_cache:
         keys:
-          - "blank-web-rails-v1-git-{{ .Branch }}-{{ .Revision }}"
-          - "blank-web-rails-v1-git-{{ .Branch }}-"
-          - "blank-web-rails-v1-git-"
+          - "bountycall-v1-git-{{ .Branch }}-{{ .Revision }}"
+          - "bountycall-v1-git-{{ .Branch }}-"
+          - "bountycall-v1-git-"
     bundler_save: &bundler_save
       save_cache:
-        key: "blank-web-rails-v1-bundler-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+        key: "bountycall-v1-bundler-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
         paths:
           - "./vendor/bundle"
           - "/usr/local/bundle/config"
     bundler_restore: &bundler_restore
       restore_cache:
         keys:
-          - "blank-web-rails-v1-bundler-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-          - "blank-web-rails-v1-bundler-{{ .Branch }}-"
-          - "blank-web-rails-v1-bundler-"
+          - "bountycall-v1-bundler-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+          - "bountycall-v1-bundler-{{ .Branch }}-"
+          - "bountycall-v1-bundler-"
 workflows:
   version: 2
   core:

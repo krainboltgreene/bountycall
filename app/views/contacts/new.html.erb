@@ -1,0 +1,52 @@
+<h1>New Contact</h1>
+
+<% if contact.present? %>
+  <%= form_for contact, url: contacts_url, html: {class: "form-horizontal"} do |form| %>
+    <section class="form-group">
+      <%= form.label :value, contact.slug.titlecase %>
+      <section class="input-group">
+        <% case contact.slug %>
+        <% when "email" %>
+          <section class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-at"></i></span>
+          </section>
+          <%= form.email_field :value, class: "form-control" %>
+        <% when "phone" %>
+          <section class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+          </section>
+          <%= form.phone_field :value, class: "form-control" %>
+        <% when "twitch" %>
+          <section class="input-group-prepend">
+            <span class="input-group-text"><i class="fab fa-twitch"></i></span>
+          </section>
+          <%= form.text_field :value, class: "form-control" %>
+        <% when "discord" %>
+          <section class="input-group-prepend">
+            <span class="input-group-text"><i class="fab fa-discord"></i></span>
+          </section>
+          <%= form.text_field :value, class: "form-control" %>
+        <% else %>
+          <%= form.text_field :value, class: "form-control" %>
+        <% end %>
+      </section>
+      <small class="form-text text-muted">
+        We'll never share your this with anyone else and you can remove it at any time.
+      </small>
+    </section>
+
+    <%= form.hidden_field :subtype, :value => contact.subtype %>
+
+    <%= form.submit class: "btn btn-primary" %>
+  <% end %>
+<% else %>
+  <p>
+    Pick from one of these types of contacts:
+  </p>
+
+  <ul>
+    <% Contact::SLUG_TO_SUBTYPE_MAPPING.each do |(slug, subtype)| %>
+      <li><%= link_to slug.titlecase, new_contact_url(:subtype => subtype) %></li>
+    <% end %>
+  </ul>
+<% end %>

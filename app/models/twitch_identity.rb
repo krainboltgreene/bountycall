@@ -1,0 +1,3 @@
+class TwitchIdentity < Identity
+
+end

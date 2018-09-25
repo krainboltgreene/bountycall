@@ -1,5 +1,5 @@
 Sidekiq.configure_server do |config|
-  config.redis = BlankWebRails::REDIS_SIDEKIQ_SERVER_CONNECTION_POOL
+  config.redis = Bountycall::REDIS_SIDEKIQ_SERVER_CONNECTION_POOL
   config.client_middleware do |chain|
     chain.add(SidekiqClientPaperTrailMiddleware)
     chain.add(SidekiqClientLogTaggingMiddleware)
@@ -13,7 +13,7 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = BlankWebRails::REDIS_SIDEKIQ_CLIENT_CONNECTION_POOL
+  config.redis = Bountycall::REDIS_SIDEKIQ_CLIENT_CONNECTION_POOL
   config.client_middleware do |chain|
     chain.add(SidekiqClientPaperTrailMiddleware)
     chain.add(SidekiqClientKillswitchMiddleware)

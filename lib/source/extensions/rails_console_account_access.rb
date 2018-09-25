@@ -1,17 +1,17 @@
 module RailsConsoleAccountAccess
   def initialize(*arguments)
-    if Rails.env.development? || Rails.env.test?
-      actor = Account.with_role_state(:administrator).last
-    else
-      Rails.logger.info("Welcome! What is your email?")
-      email = gets.chomp
+    return super(*arguments) if Rails.env.development? || Rails.env.test?
 
-      raise(NoConsoleAuthenticationProvidedError) if email.blank?
+    Rails.logger.info("Welcome! What is your id?")
 
-      actor = Account.find_by!(:email => email)
-    end
+    id = gets.chomp
 
-    PaperTrail.request.whodunnit = actor.email
+    raise(NoConsoleAuthenticationProvidedError) if id.blank?
+
+    actor = Account.find_by!(:id => id)
+
+    PaperTrail.request.whodunnit = actor.id
+
     PaperTrail.request.controller_info = {
       :context_id => SecureRandom.uuid(),
       :actor_id => actor.id

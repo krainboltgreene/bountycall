@@ -1,0 +1,3 @@
+fetch_all_bounties_job: # a unique name for this schedule
+  class: FetchAllBountiesJob
+  cron: "* * * * *"
