@@ -4,7 +4,6 @@ class CreateAccounts < ActiveRecord::Migration[5.1]
       table.text(:name)
       table.citext(:email)
       table.citext(:username)
-      table.citext(:onboarding_state, :null => false)
       table.citext(:role_state, :null => false)
       table.text(:encrypted_password, :null => false)
       table.text(:authentication_secret, :null => false)
@@ -22,7 +21,6 @@ class CreateAccounts < ActiveRecord::Migration[5.1]
 
       table.index(:email)
       table.index(:username)
-      table.index(:onboarding_state)
       table.index(:role_state)
       table.index(:confirmation_token, :unique => true)
       table.index(:unlock_token, :unique => true)
@@ -30,7 +28,6 @@ class CreateAccounts < ActiveRecord::Migration[5.1]
     end
 
     safety_assured do
-      add_null_constraint(:accounts, :name, :if => %("accounts"."onboarding_state" = 'completed'))
       add_unique_constraint(:accounts, :email)
       add_unique_constraint(:accounts, :username)
     end

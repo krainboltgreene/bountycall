@@ -1,5 +1,11 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.console = true
+    Bullet.rails_logger = true
+    Bullet.add_footer = true
+  end
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -28,7 +34,7 @@ Rails.application.configure do
   config.active_record.verbose_query_logs = true
 
   # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
+  config.action_view.raise_on_missing_translations = true
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.

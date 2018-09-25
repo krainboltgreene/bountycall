@@ -6,7 +6,7 @@ class AccountRoleMailer < ApplicationMailer
   #   en.account_role_mailer.upgraded_to_administrator.subject
   #
   def upgraded_to_administrator
-    mail(:to => params[:destination].email)
+    mail(:to => params.fetch(:destination).email)
   end
 
   # Subject can be set in your I18n file at config/locales/en.yml
@@ -15,6 +15,6 @@ class AccountRoleMailer < ApplicationMailer
   #   en.account_role_mailer.downgraded_to_user.subject
   #
   def downgraded_to_user
-    mail(:to => params[:destination].email)
+    mail(:to => params.fetch(:destination).email)
   end
 end

@@ -27,8 +27,6 @@ PaperTrail.request(:whodunnit => Account::MACHINE_ID, :controller_info => {:cont
         :email => "kurtis@rainbolt-greene.online",
         :password => SecureRandom.hex(32)
       )
-      krainboltgreene.confirm
-      krainboltgreene.complete!
       krainboltgreene.upgrade_to_administrator!
     end
 
@@ -39,8 +37,6 @@ PaperTrail.request(:whodunnit => Account::MACHINE_ID, :controller_info => {:cont
         :email => "sally@example.com",
         :password => "password"
       )
-      administrator.confirm
-      administrator.complete!
       administrator.upgrade_to_administrator!
 
       user = Account.create!(
@@ -49,8 +45,7 @@ PaperTrail.request(:whodunnit => Account::MACHINE_ID, :controller_info => {:cont
         :email => "calvin@example.com",
         :password => "password"
       )
-      user.confirm
-      user.complete!
+      user = Account.create!
 
       PaperTrail.request(:whodunnit => administrator.email, :controller_info => {:context_id => SecureRandom.uuid(), :actor_id => administrator.id}) do
       end

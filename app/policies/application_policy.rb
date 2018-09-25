@@ -12,10 +12,6 @@ class ApplicationPolicy
       relation.none
     end
 
-    private def completed?
-      actor.onboarding_state?(:completed)
-    end
-
     private def administrator?
       actor.role_state?(:administrator)
     end
@@ -81,10 +77,6 @@ class ApplicationPolicy
     end
   end
 
-  private def completed
-    actor.onboarding_state?(:completed)
-  end
-
   private def administrators
     actor.role_state?(:administrator)
   end
@@ -99,14 +91,6 @@ class ApplicationPolicy
 
   private def users
     actor.role_state?(:user)
-  end
-
-  private def converted?
-    actor.onboarding_state?(:converted)
-  end
-
-  private def completed?
-    actor.onboarding_state?(:completed)
   end
 
   private def only_logged_out

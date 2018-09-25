@@ -19,6 +19,10 @@ require("active_storage/engine")
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require("sidekiq/web")
+require("sidekiq_unique_jobs/web")
+require("sidecloq/web")
+
 require_relative("../lib/source")
 
 module BlankWebRails
@@ -101,7 +105,7 @@ module BlankWebRails
     else
       Rails.application.config.action_mailer.default_url_options = {
         :host => ENV.fetch("RAILS_HOST"),
-        :port => ENV.fetch("PORT")
+        :port => Integer(ENV.fetch("PORT"))
       }
     end
   end

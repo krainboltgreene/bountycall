@@ -14,6 +14,7 @@ gem("rack-cors", "1.0.2")
 gem("rack-attack", "5.4.0")
 gem("secure_headers", "6.0.0")
 gem("sidekiq", "5.1.3")
+gem("sidekiq-unique-jobs", "6.0.6")
 gem("devise", "4.4.3")
 gem("devise-async", "1.0.0")
 gem("groupdate", "4.0.1")
@@ -50,6 +51,7 @@ gem("mini_magick", "4.9.2")
 gem("high_voltage", "3.1.0")
 gem("sitemap_generator", "6.0.1")
 gem("rack-timeout", "0.5.1")
+gem("sidecloq", "0.4.1")
 
 group(:production) do
   gem("newrelic_rpm", "5.2.0.345")
@@ -71,9 +73,8 @@ group(:test) do
 end
 
 group(:development) do
-  gem("active_record_query_trace", "1.5.4", :require => false)
   gem("brakeman", "4.3.1", :require => false)
-  gem("bullet", "5.7.5", :require => false)
+  gem("bullet", "5.7.5")
   gem("bundler-audit", "0.6.0", :require => false)
   gem("flamegraph", "0.9.5", :require => false)
   gem("memory_profiler", "0.9.11", :require => false)

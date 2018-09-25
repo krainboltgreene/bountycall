@@ -54,9 +54,6 @@ class RequestErrorHandlingOperation < ApplicationOperation
   end
   def render_output(state:)
     case state.exception
-    when JSONAPI::Realizer::Error::MissingAcceptHeader then missing_accept_header(state.controller)
-    when JSONAPI::Realizer::Error::InvalidAcceptHeader then invalid_accept_header(state.controller)
-    when JSONAPI::Realizer::Error::MalformedDataRootProperty then malformed_data_root_property(state.controller)
     when Pundit::NotAuthorizedError then access_not_authorized(state.controller)
     when ActiveRecord::RecordInvalid then record_invalid(state.controller, state.exception)
     when ActiveRecord::RecordNotFound then record_not_found(state.controller)
@@ -69,7 +66,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
 
   private def record_invalid(controller, exception)
     controller.render(
-      :json => JSONAPI::Serializer.serialize_errors(exception.record.errors),
+      :plain => exception.record.errors.full_messages,
       :status => :unprocessable_entity
     )
   end
@@ -80,7 +77,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
 
   private def application_exception(controller, exception)
     controller.render(
-      :json => JSONAPI::Serializer.serialize_errors(standard_jsonapi_error(exception)),
+      :plain => exception.record.errors.full_messages,
       :status => :unprocessable_entity
     )
   end
