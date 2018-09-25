@@ -96,14 +96,24 @@ module Bountycall
     ]
 
     if ENV.fetch("HEROKU_APP_NAME", nil)
+      Rails.application.config.action_controller.default_url_options = {
+        :host => "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
+      }
       Rails.application.config.action_mailer.default_url_options = {
         :host => "#{ENV.fetch("HEROKU_APP_NAME")}.herokuapp.com"
       }
     elsif Rails.env.production?
+      Rails.application.config.action_controller.default_url_options = {
+        :host => ENV.fetch("RAILS_HOST")
+      }
       Rails.application.config.action_mailer.default_url_options = {
         :host => ENV.fetch("RAILS_HOST")
       }
     else
+      Rails.application.config.action_controller.default_url_options = {
+        :host => ENV.fetch("RAILS_HOST"),
+        :port => Integer(ENV.fetch("PORT"))
+      }
       Rails.application.config.action_mailer.default_url_options = {
         :host => ENV.fetch("RAILS_HOST"),
         :port => Integer(ENV.fetch("PORT"))
