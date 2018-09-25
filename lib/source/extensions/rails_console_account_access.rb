@@ -1,6 +1,6 @@
 module RailsConsoleAccountAccess
   def initialize(*arguments)
-    return super(*arguments) if Rails.env.development? || Rails.env.test?
+    return super(*arguments) if Rails.env.development? || Rails.env.test? || !Account.exists?
 
     Rails.logger.info("Welcome! What is your id?")
 

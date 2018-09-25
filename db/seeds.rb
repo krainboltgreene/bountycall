@@ -8,10 +8,10 @@
 
 PaperTrail.request(:whodunnit => Account::MACHINE_ID, :controller_info => {:context_id => SecureRandom.uuid(), :actor_id => nil}) do
   ActiveRecord::Base.transaction do
-    if Rails.env.production? && Account.count.zero?
-      krainboltgreene = Account.create!
-      krainboltgreene.upgrade_to_administrator!
-    end
+    # if Rails.env.production? && Account.count.zero?
+    #   krainboltgreene = Account.create!
+    #   krainboltgreene.upgrade_to_administrator!
+    # end
 
     if Rails.env.development?
       administrator = Account.create!()
