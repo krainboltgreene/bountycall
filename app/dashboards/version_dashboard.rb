@@ -6,10 +6,11 @@ class VersionDashboard < ApplicationDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
+    :id => Field::String,
     :item_type => Field::String,
     :item => Field::Polymorphic,
     :event => Field::String,
-    :group_id => Field::String,
+    :context_id => Field::String,
     :actor => Field::BelongsTo.with_options(:class_name => "Account"),
     :transitions => TransitionField,
     :object_changes => ChangesetField,
@@ -22,16 +23,18 @@ class VersionDashboard < ApplicationDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = [
+    :id,
     :actor,
     :event,
-    :group_id,
+    :context_id,
     :item
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = [
-    :group_id,
+    :id,
+    :context_id,
     :event,
     :transitions,
     :object_changes,
