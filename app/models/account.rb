@@ -2,6 +2,7 @@ class Account < ApplicationRecord
   MACHINE_ID = "machine@system.local".freeze
   include(AuditedWithTransitions)
 
+  has_many :identities, dependent: :destroy
   has_one :twitch_identity, dependent: :destroy
   has_many :contacts, dependent: :destroy
   has_many :email_contacts, dependent: :destroy
