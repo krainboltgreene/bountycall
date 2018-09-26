@@ -28,17 +28,17 @@ class Account < ApplicationRecord
 
     before_transition(:do => :version_transition)
 
-    after_transition(:on => :upgrade_to_administrator) do |record|
-      record.after_transaction do
-        AccountRoleMailer.with(:destination => record).upgraded_to_administrator.deliver_later
-      end
-    end
-
-    after_transition(:on => :downgrade_to_user) do |record|
-      record.after_transaction do
-        AccountRoleMailer.with(:destination => record).downgraded_to_user.deliver_later
-      end
-    end
+    # after_transition(:on => :upgrade_to_administrator) do |record|
+    #   record.after_transaction do
+    #     AccountRoleMailer.with(:destination => record).upgraded_to_administrator.deliver_later
+    #   end
+    # end
+    #
+    # after_transition(:on => :downgrade_to_user) do |record|
+    #   record.after_transaction do
+    #     AccountRoleMailer.with(:destination => record).downgraded_to_user.deliver_later
+    #   end
+    # end
   end
 
   def self.find_or_create_with_omniauth(data)
