@@ -6,6 +6,8 @@
 # you're free to overwrite the RESTful controller actions.
 module Admin
   class ApplicationController < Administrate::ApplicationController
+    include Pundit
+
     before_action(:authenticate_account!)
     before_action(:authorize_administrator!)
     before_action(:assign_paper_trail_context)
@@ -16,7 +18,7 @@ module Admin
     etag {current_account&.id}
 
     def authorize_administrator!
-      raise(Pundit::NotAuthorizedError, :message => "you're not allowed to use this resource") unless current_account.administrator?
+      authorize(self, :policy_class => AdminPolicy)
     end
 
     private def assign_paper_trail_context
@@ -57,5 +59,9 @@ module Admin
     # def records_per_page
     #   params[:per_page] || 20
     # end
+
+    def pundit_user
+      current_account
+    end
   end
 end

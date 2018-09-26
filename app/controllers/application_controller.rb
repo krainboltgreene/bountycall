@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Pundit
+
   before_action(:assign_paper_trail_context)
   before_bugsnag_notify(:assign_account_context)
   before_bugsnag_notify(:assign_request_tab)
@@ -37,5 +39,9 @@ class ApplicationController < ActionController::Base
 
   private def generic_error_handling(exception)
     RequestErrorHandlingOperation.(:controller => self, :exception => exception)
+  end
+
+  def pundit_user
+    current_account
   end
 end
