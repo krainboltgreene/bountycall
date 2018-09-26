@@ -23,6 +23,7 @@ Bundler.require(*Rails.groups)
 require("sidekiq/web")
 require("sidekiq_unique_jobs/web")
 require("sidecloq/web")
+require("administrate/base_dashboard")
 
 require_relative("../lib/source")
 

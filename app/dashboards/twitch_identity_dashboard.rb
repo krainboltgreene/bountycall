@@ -1,0 +1,2 @@
+class TwitchIdentityDashboard < IdentityDashboard
+end

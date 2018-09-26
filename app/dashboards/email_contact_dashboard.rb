@@ -1,0 +1,3 @@
+class EmailContactDashboard < ContactDashboard
+
+end

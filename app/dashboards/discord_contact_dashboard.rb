@@ -1,0 +1,3 @@
+class DiscordContactDashboard < ContactDashboard
+
+end

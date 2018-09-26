@@ -1,0 +1,3 @@
+class TwitchContactDashboard < ContactDashboard
+
+end

@@ -22,7 +22,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
   end
 
   schema(:notify_bugsnag) do
-    field(:controller, :type => Types.Instance(ApplicationController))
+    field(:controller, :type => (Types.Instance(ApplicationController) | Types.Instance(Admin::ApplicationController)))
     field(:exception, :type => Types.Instance(StandardError))
   end
   def notify_bugsnag(state:)
@@ -49,7 +49,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
   end
 
   schema(:render_output) do
-    field(:controller, :type => Types.Instance(ApplicationController))
+    field(:controller, :type => (Types.Instance(ApplicationController) | Types.Instance(Admin::ApplicationController)))
     field(:exception, :type => Types.Instance(StandardError))
   end
   def render_output(state:)

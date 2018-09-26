@@ -1,0 +1,2 @@
+class DiscordIdentityDashboard < IdentityDashboard
+end

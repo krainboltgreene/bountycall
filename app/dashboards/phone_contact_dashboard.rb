@@ -1,0 +1,3 @@
+class PhoneContactDashboard < ContactDashboard
+
+end
