@@ -4,7 +4,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
   task(:render_output)
 
   schema(:write_to_log) do
-    field(:exception, :type => Types.Instance(StandardError))
+    field(:exception, :type => (Types.Instance(StandardError) | Types.instance(RuntimeError))
   end
   def write_to_log(state:)
     case state.exception
@@ -23,7 +23,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
 
   schema(:notify_bugsnag) do
     field(:controller, :type => (Types.Instance(ApplicationController) | Types.Instance(Admin::ApplicationController)))
-    field(:exception, :type => Types.Instance(StandardError))
+    field(:exception, :type => (Types.Instance(StandardError) | Types.instance(RuntimeError))
   end
   def notify_bugsnag(state:)
     return unless Rails.env.production?
@@ -50,7 +50,7 @@ class RequestErrorHandlingOperation < ApplicationOperation
 
   schema(:render_output) do
     field(:controller, :type => (Types.Instance(ApplicationController) | Types.Instance(Admin::ApplicationController)))
-    field(:exception, :type => Types.Instance(StandardError))
+    field(:exception, :type => (Types.Instance(StandardError) | Types.instance(RuntimeError)))
   end
   def render_output(state:)
     case state.exception

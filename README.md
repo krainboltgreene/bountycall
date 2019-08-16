@@ -1,5 +1,6 @@
 ## Notes
 
+I'm making authenticated calls via the official oauth authentication system with an account that has given me third-party oauth authentication, to a publicly available graphql interface that publicly surfaces it's documentation and details. Me misinterpreting the error message and incorrectly creating HTTP requests is not bypassing security or not being unauthorized.
 
 
 ## Setup

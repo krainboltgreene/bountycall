@@ -12,12 +12,12 @@ class FetchBountiesJob < ApplicationJob
 
     request = Net::HTTP::Post.new(uri)
     request["Client-Id"] = client_id
-    request["authorization"] = "Bearer #{identity.raw.fetch("credentials").fetch("token")}"
-    request.body = "{\"query\":\"{\\n  user(id: #{identity.external_id}) {\\n\\t\\tbounties(status: \\\"active\\\") {id}\\n\\t}\\n}\"}"
+    request["Accept"] = "application/json; charset=utf-8"
+    request["Authorization"] = "OAuth #{identity.raw.fetch("credentials").fetch("token")}"
+    request.body = "{\"query\":\"{\\n  user(id: #{identity.external_id}) {\\n\\t\\tbounties(status: \\\"COMPLETED\\\") {id}\\n\\t}\\n}\"}"
 
     response = http.request(request)
-    data = JSON.parse(response.read_body)
 
-    Rails.logger.debug(data)
+    Rails.logger.info("BOUNTY: #{response.body}")
   end
 end
